@@ -18,7 +18,7 @@ function Cover() {
   var [email, setEmail] = useState("admin@pharmacist.com");
   var [fullName, setfullName] = useState("admin@pharmacist.com");
   var [password, setPassword] = useState("");
-  var [role, setRole] = useState("PATIENT");
+  var [role, setRole] = useState("PHARMACIST");
 
   async function createUser(login, password, fullName, role) {
     if (!!login && !!password && !!role) {
@@ -30,10 +30,10 @@ function Cover() {
           fullName: fullName,
         });
         if (res.data.success) {
-          toast.success("Successfully Registered Patient");
+          toast.success("Successfully Registered Pharmacy");
         }
         if (res.data.msg.length) {
-          toast.error(`Patient already exist`);
+          toast.error(`Pharmacy already exist`);
         }
       } catch (error) {
         console.log(error);
@@ -74,7 +74,7 @@ function Cover() {
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
               >
-                <MenuItem value={"PATIENT"}>PATIENT</MenuItem>
+                <MenuItem value={"PHARMACIST"}>PHARMACIST</MenuItem>
               </Select>
               <MDBox mb={2}>
                 <MDInput

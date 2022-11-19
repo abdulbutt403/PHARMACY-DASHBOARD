@@ -1,3 +1,5 @@
+/* eslint-disable no-debugger, no-console */
+
 import { useState, useEffect, useMemo } from "react";
 import './App.css'
 // react-router components

@@ -37,7 +37,7 @@ function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   var [email, setEmail] = useState("admin@pharmacist.com");
   var [password, setPassword] = useState("password");
-  var [role, setRole] = useState("PATIENT");
+  var [role, setRole] = useState("PHARMACIST");
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
   const dispatch = useDispatch();
 
@@ -110,7 +110,7 @@ function Basic() {
               value={role}
               onChange={(e) => setRole(e.target.value)}
             >
-              <MenuItem value={"PATIENT"}>PATIENT</MenuItem>
+              <MenuItem value={"PHARMACIST"}>PHARMACIST</MenuItem>
             </Select>
             <MDBox mb={2}>
               <MDInput
