@@ -37,6 +37,8 @@ import { cartAdd } from "shared/reducers/UserSlice";
 import { Navigate } from "react-router-dom";
 import MDBadge from "components/MDBadge";
 import jwt from "jwt-decode";
+import MDInput from "components/MDInput";
+import MDButton from "components/MDButton";
 
 function Pharmacies() {
   const isMobile = useMediaQuery({ query: "(max-width: 786px)" });
@@ -50,17 +52,11 @@ function Pharmacies() {
 
   console.log(isAuth);
 
-  
-
   const [quant, setQuant] = React.useState(0);
   const [rowData, setRowData] = React.useState(null);
   const dispatch = useDispatch();
   const store = useSelector((store) => store.root.user);
   console.log({ store });
-
-
-
-
 
   const tableIcons = {
     Add: forwardRef((props, ref) => (
@@ -92,13 +88,11 @@ function Pharmacies() {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  useEffect(() => {
-    getMedicines();
-  }, []);
+  var [title, setTitle] = useState("");
+  var [quantity, setQuantity] = useState("");
+  var [price, setPrice] = useState("");
 
-
-
-  const removeItem = async (body) => {
+  const createMedicine = async (body) => {
     const { title, quantity, price } = body;
 
     console.log({ title, quantity, price });
@@ -117,28 +111,13 @@ function Pharmacies() {
       };
 
       console.log({payload})
-      const posts = await axios.post(endPoint + "/users/removeMedicine", payload);
-      toast.success("Successfully Removed Medicine");
+      const posts = await axios.post(endPoint + "/users/addMedicine", payload);
+      toast.success("Successfully Entered Medicine");
       console.log({ posts });
-      getMedicines()
       setLoading(false);
     }
   };
 
-  const getMedicines = async () => {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "/authentication/sign-in";
-    else {
-      const decoded = jwt(token);
-      setLoading(true);
-      const posts = await axios.post(endPoint + "/users/medicineByPharmacy", {
-        pharmacyId: decoded.id,
-      });
-      console.log({ posts });
-      setStocks(posts.data.orders);
-      setLoading(false);
-    }
-  };
   return isAuth ? (
     <React.Fragment>
       <Toaster position="top-center" reverseOrder={false} />
@@ -146,79 +125,48 @@ function Pharmacies() {
         <DashboardNavbar />
         <MDBox pt={6} pb={3}>
           <Grid container spacing={6}>
-            <Grid item xs={12}>
-              <Card>
-                <MDBox
-                  mx={0}
-                  mt={-3}
-                  py={3}
-                  px={2}
-                  style={{
-                    display: "flex",
-                    width: "100%",
-                    justifyContent: "space-between",
-                  }}
-                  variant="gradient"
-                  bgColor="info"
-                  borderRadius="lg"
-                  coloredShadow="info"
-                >
-                  <MDTypography variant="h6" color="white">
-                    Medicines
-                  </MDTypography>
-              
-                </MDBox>
-                <MDBox pt={3}>
-                  <MaterialTable
-                    icons={tableIcons}
-                    title=""
-                    columns={[
-                      {
-                        title: "Identifier",
-                        render: (rowData) => (
-                          <span className="mt_dt">{rowData.Identifier}</span>
-                        ),
-                      },
-                      {
-                        title: "Name",
-                        render: (rowData) => (
-                          <span className="mt_dt">{rowData.Title}</span>
-                        ),
-                      },
-                      {
-                        title: "Stock",
-                        render: (rowData) => (
-                          <span className="mt_dt">{rowData.Quantity}</span>
-                        ),
-                      },
-                      {
-                        title: "Price (Per Tablet)",
-                        render: (rowData) => (
-                          <span className="mt_dt">{rowData.Price}</span>
-                        ),
-                      },
-                    ]}
-                    actions={[
-                      {
-                        icon: () => <Clear />,
-                        tooltip: "Delete",
-                        onClick: (event, rowData) => removeItem({ title : rowData.Title, quantity: rowData.Quantity, price : rowData.Price}),
-                      },
-                    ]}
-                    data={stocks}
-                    options={{
-                      actionsColumnIndex: -1,
-                      headerStyle: {
-                        backgroundColor: "transparent",
-                        color: "#7b809a",
-                        fontSize: "0.8rem",
-                        opacity: 0.7,
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        textTransform: "uppercase",
-                      },
-                    }}
+            <Grid item xs={6} style={{ margin: "auto" }}>
+              <Card style={{ padding: "7%" }}>
+                <MDBox mb={2}>
+                  <MDInput
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    label="Title"
+                    variant="standard"
+                    fullWidth
                   />
+                </MDBox>
+                <MDBox mb={2}>
+                  <MDInput
+                    type="number"
+                    label="Quantity"
+                    variant="standard"
+                    fullWidth
+                    value={quantity}
+                    onChange={(e) => setQuantity(e.target.value)}
+                  />
+                </MDBox>
+                <MDBox mb={2}>
+                  <MDInput
+                    type="number"
+                    label="Price (Per Tablet)"
+                    variant="standard"
+                    fullWidth
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  />
+                </MDBox>
+
+                <MDBox mt={4} mb={1}>
+                  <MDButton
+                    variant="gradient"
+                    color="info"
+                    fullWidth
+                    onClick={() => createMedicine({ title, quantity, price })}
+                  >
+                    ADD MEDICINE
+                  </MDButton>
                 </MDBox>
               </Card>
             </Grid>

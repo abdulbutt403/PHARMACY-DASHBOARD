@@ -18,6 +18,7 @@ function Cover() {
   var [email, setEmail] = useState("admin@pharmacist.com");
   var [fullName, setfullName] = useState("admin@pharmacist.com");
   var [password, setPassword] = useState("");
+  var [address, setAddress] = useState("");
   var [role, setRole] = useState("PHARMACIST");
 
   async function createUser(login, password, fullName, role) {
@@ -28,6 +29,7 @@ function Cover() {
           password: password,
           role: role,
           fullName: fullName,
+          address: address
         });
         if (res.data.success) {
           toast.success("Successfully Registered Pharmacy");
@@ -104,6 +106,16 @@ function Cover() {
                   fullWidth
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                />
+              </MDBox>
+              <MDBox mb={2}>
+                <MDInput
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  label="Address"
+                  variant="standard"
+                  fullWidth
                 />
               </MDBox>
               <MDBox display="flex" alignItems="center" ml={-1}>

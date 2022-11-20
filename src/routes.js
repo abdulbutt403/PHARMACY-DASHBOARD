@@ -47,6 +47,7 @@ import SignUp from "layouts/authentication/sign-up";
 // @mui icons
 import Icon from "@mui/material/Icon";
 import Pharmacies from "layouts/Pharmacies";
+import AddForm from "layouts/AddForm";
 
 const routes = [
   {
@@ -67,27 +68,19 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Pharmacies",
-    key: "pharmacies",
+    name: "Medicines",
+    key: "medicines",
     icon: <Icon fontSize="small">receipt_long</Icon>,
-    route: "/pharmacies",
+    route: "/medicines",
     component: <Pharmacies />,
   },
   {
     type: "collapse",
-    name: "Reports",
-    key: "notifications",
-    icon: <Icon fontSize="small">Reports</Icon>,
-    route: "/notifications",
-    component: <Notifications />,
-  },
-  {
-    type: "collapse",
-    name: "Cart",
-    key: "cart",
-    icon: <Icon fontSize="small">Cart</Icon>,
-    route: "/cart",
-    component: <Notifications />,
+    name: "Add Medcine",
+    key: "add_medicines",
+    icon: <Icon fontSize="small">assignment</Icon>,
+    route: "/form",
+    component: <AddForm />,
   },
   {
     type: "collapse",
