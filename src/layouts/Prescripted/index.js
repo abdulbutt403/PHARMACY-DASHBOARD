@@ -5,8 +5,6 @@ import MDTypography from "components/MDTypography";
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import AddBox from "@material-ui/icons/AddBox";
-
-import toast, { Toaster } from "react-hot-toast";
 import ArrowDownward from "@material-ui/icons/ArrowDownward";
 import Check from "@material-ui/icons/Check";
 import ChevronLeft from "@material-ui/icons/ChevronLeft";
@@ -86,11 +84,11 @@ function Tables() {
     else {
       const decoded = jwt(token);
       setLoading(true);
-      const posts = await axios.post(endPoint + "/users/orderByPharmacy", {
-        pharmacyId: decoded.id,
+      const posts = await axios.post(endPoint + "/users/getPrescrptionPharmacy", {
+        pharmacyEmail: decoded.email,
       });
       console.log({ posts });
-      setData(posts.data.orders);
+      setData(posts.data.found);
       setLoading(false);
     }
   };
@@ -103,59 +101,8 @@ function Tables() {
     setMedicine(true);
   };
 
-  const rejectOrder = async (event, rowData) => {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "/authentication/sign-in";
-    else {
-      const decoded = jwt(token);
-      const body = {
-        orderId: rowData.Identifier,
-        pharmacyId: decoded.id,
-        status: "REJECTED",
-        patientEmail: rowData.patientEmail,
-      };
-      console.log({ body });
-      const posts = await axios.post(endPoint + "/users/orderUpdate", body);
-      toast.success("Marked as Rejected.", {
-        style: {
-          border: "1px solid orange",
-          padding: "12px",
-          color: "orange",
-        },
-        iconTheme: {
-          primary: "orange",
-          secondary: "#FFFAEE",
-        },
-      });
-      console.log({ posts });
-      setLoading(false);
-      getOrders();
-    }
-  };
-
-  const completeOrder = async (event, rowData) => {
-    const token = localStorage.getItem("token");
-    if (!token) window.location.href = "/authentication/sign-in";
-    else {
-      const decoded = jwt(token);
-      const body = {
-        orderId: rowData.Identifier,
-        pharmacyId: decoded.id,
-        status: "DELIVERED",
-        patientEmail: rowData.patientEmail,
-      };
-      console.log({ body });
-      const posts = await axios.post(endPoint + "/users/orderUpdate", body);
-      toast.success("Marked as completed");
-      console.log({ posts });
-      setLoading(false);
-      getOrders();
-    }
-  };
-
   return isAuth ? (
     <React.Fragment>
-      <Toaster position="top-center" reverseOrder={false} />
       <DashboardLayout>
         <DashboardNavbar />
         <MDBox pt={6} pb={3}>
@@ -189,7 +136,7 @@ function Tables() {
                       columns={[
                         {
                           title: "Pharmacy",
-                          field: "pharmacyName",
+                          field: "pharmacyEmail",
                         },
                         {
                           title: "Ordered By",
@@ -199,25 +146,25 @@ function Tables() {
                           title: "Status",
                           render: (rowData) => (
                             <>
-                              {rowData.state === "PENDING" && (
+                              {rowData.status === "PENDING" && (
                                 <MDBadge
-                                  badgeContent={rowData.state}
+                                  badgeContent={rowData.status}
                                   color="secondary"
                                   variant="gradient"
                                   size="lg"
                                 />
                               )}
-                              {rowData.state === "DELIVERED" && (
+                              {rowData.status === "DELIVERED" && (
                                 <MDBadge
-                                  badgeContent={rowData.state}
+                                  badgeContent={rowData.status}
                                   color="info"
                                   variant="gradient"
                                   size="lg"
                                 />
                               )}
-                              {rowData.state === "REJECTED" && (
+                              {rowData.status === "REJECTED" && (
                                 <MDBadge
-                                  badgeContent={rowData.state}
+                                  badgeContent={rowData.status}
                                   color="primary"
                                   variant="gradient"
                                   size="lg"
@@ -227,36 +174,20 @@ function Tables() {
                           ),
                         },
                         {
-                          title: "Address",
-                          field: "address",
-                        },
-                        {
-                          title: "Medicines",
+                          title: "Prescription",
                           render: (rowData) => (
-                            <span className="mt_dt">
-                              {rowData.Medicines.length} Medicines
-                            </span>
+                            <a href={rowData.Image} target="blank" style={{textDecoration: 'underline'}}>
+                              open
+                            </a>
                           ),
                         },
-                      ]}
-                      actions={[
                         {
-                          icon: () => <Search />,
-                          tooltip: "See medicines",
-                          onClick: (event, rowData) =>
-                            openPharmacy(event, rowData),
+                          title: "Mobile Number",
+                          field: "phoneNumber"
                         },
                         {
-                          icon: () => <Clear />,
-                          tooltip: "Rejected order",
-                          onClick: (event, rowData) =>
-                            rejectOrder(event, rowData),
-                        },
-                        {
-                          icon: () => <Check />,
-                          tooltip: "Mark as Delivered",
-                          onClick: (event, rowData) =>
-                            completeOrder(event, rowData),
+                          title: "Address",
+                          field: "address",
                         },
                       ]}
                       data={data}
@@ -278,84 +209,6 @@ function Tables() {
               </Grid>
             )}
 
-            {medicine && (
-              <Grid item xs={12}>
-                <Card>
-                  <MDBox
-                    mx={0}
-                    mt={-3}
-                    py={3}
-                    px={2}
-                    style={{
-                      display: "flex",
-                      width: "100%",
-                      justifyContent: "space-between",
-                    }}
-                    variant="gradient"
-                    bgColor="info"
-                    borderRadius="lg"
-                    coloredShadow="info"
-                  >
-                    <MDTypography variant="h6" color="white">
-                      Medicines
-                    </MDTypography>
-                    <button
-                      style={{
-                        background: "transparent",
-                        cursor: "pointer",
-                        border: "none",
-                        outline: "none",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                      onClick={() => setMedicine(false)}
-                    >
-                      <ChevronLeft style={{ color: "#fff", fontSize: 26 }} />
-                      <MDTypography variant="span" color="white">
-                        Back To Orders
-                      </MDTypography>
-                    </button>
-                  </MDBox>
-                  <MDBox pt={3}>
-                    <MaterialTable
-                      icons={tableIcons}
-                      title=""
-                      columns={[
-                        {
-                          title: "Identifier",
-                          field: "_id",
-                        },
-                        {
-                          title: "Name",
-                          field: "Title",
-                        },
-                        {
-                          title: "Stock",
-                          field: "Quantity",
-                        },
-                        {
-                          title: "Price (Per Tablet)",
-                          field: "Price",
-                        },
-                      ]}
-                      data={stocks}
-                      options={{
-                        actionsColumnIndex: -1,
-                        headerStyle: {
-                          backgroundColor: "transparent",
-                          color: "#7b809a",
-                          fontSize: "0.8rem",
-                          opacity: 0.7,
-                          fontStyle: "normal",
-                          fontWeight: 700,
-                          textTransform: "uppercase",
-                        },
-                      }}
-                    />
-                  </MDBox>
-                </Card>
-              </Grid>
-            )}
           </Grid>
         </MDBox>
       </DashboardLayout>

@@ -6,6 +6,7 @@ import Icon from "@mui/material/Icon";
 import Pharmacies from "layouts/Pharmacies";
 import AddForm from "layouts/AddForm";
 import EditProfile from "layouts/EditProfile";
+import Prescripted from "layouts/Prescripted";
 
 const routes = [
   {
@@ -47,6 +48,14 @@ const routes = [
     icon: <Icon fontSize="small">Edit</Icon>,
     route: "/edit_profile",
     component: <EditProfile />,
+  },
+  {
+    type: "collapse",
+    name: "Prescripted Orders",
+    key: "prescripted",
+    icon: <Icon fontSize="small">receipt</Icon>,
+    route: "/prescripted",
+    component: <Prescripted />,
   },
   {
     type: "collapse",
