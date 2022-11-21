@@ -44,7 +44,7 @@ const routes = [
     type: "collapse",
     name: "Edit Profile",
     key: "edit_profile",
-    icon: <Icon fontSize="small">Reports</Icon>,
+    icon: <Icon fontSize="small">Edit</Icon>,
     route: "/edit_profile",
     component: <EditProfile />,
   },
