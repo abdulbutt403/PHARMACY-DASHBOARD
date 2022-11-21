@@ -120,7 +120,9 @@ function EditProfile() {
       const payload = { pharmacyId : decoded.id, email, password, fullName, address };
       const posts = await axios.post(endPoint + "/users/editPharmacy", payload);
       console.log({ posts });
+      toast.success('Profile Updated Successfully')
       setLoading(false);
+      
     }
   };
 
