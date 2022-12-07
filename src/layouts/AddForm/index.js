@@ -30,7 +30,7 @@ import React, { forwardRef, useState, useEffect } from "react";
 import axios from "axios";
 import { endPoint } from "contants";
 import { useMediaQuery } from "react-responsive";
-import { Button } from "@mui/material";
+import { Button, MenuItem, Select } from "@mui/material";
 import toast, { Toaster } from "react-hot-toast";
 import { setPharmacies } from "shared/reducers/UserSlice";
 import { cartAdd } from "shared/reducers/UserSlice";
@@ -91,6 +91,9 @@ function Pharmacies() {
   var [title, setTitle] = useState("");
   var [quantity, setQuantity] = useState("");
   var [price, setPrice] = useState("");
+  var [prescription, setPrescription] = useState(false);
+
+  
 
   const createMedicine = async (body) => {
     const { title, quantity, price } = body;
@@ -108,6 +111,7 @@ function Pharmacies() {
         Quantity: quantity,
         Identifier: Math.floor(Math.random() * 100 + 1) + Date.now(),
         Price: price,
+        Prescription: prescription
       };
 
       console.log({payload})
@@ -157,6 +161,15 @@ function Pharmacies() {
                     onChange={(e) => setPrice(e.target.value)}
                   />
                 </MDBox>
+                <span style={{textTransform: 'uppercase', fontStyle: 'bold', fontSize: 13}}>Prescription required?</span>
+                <Select
+                style={{ width: "100%", marginTop: 3, height: 40, marginBottom: 20 }}
+                value={prescription}
+                onChange={(e) => setPrescription(e.target.value)}
+              >
+                <MenuItem value={false}>No</MenuItem>
+                <MenuItem value={true}>Yes</MenuItem>
+              </Select>
 
                 <MDBox mt={4} mb={1}>
                   <MDButton

@@ -64,7 +64,11 @@ function Basic() {
       }
     }
     catch (err) {
-      toast.error(`Authorization Error...`)
+      if (err.response.data.message === "Not Verified") {
+        toast.error(`Account not verified...`);
+      } else {
+        toast.error(`Authorization Error...`);
+      }
     }
   }
 

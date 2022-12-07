@@ -11,88 +11,73 @@ import reportsLineChartData from "layouts/dashboard/data/reportsLineChartData";
 import OrdersOverview from "layouts/dashboard/components/OrdersOverview";
 import { useSelector } from "react-redux";
 import {Navigate} from 'react-router-dom'
+import axios from "axios";
+import { endPoint } from "contants";
+import jwt from "jwt-decode";
+import React , {useState, useEffect} from 'react'
+
 
 
 function Dashboard() {
   const { sales, tasks } = reportsLineChartData; 
   const isAuth = useSelector((store) => store.root.user.authenticated);
-
+  const [data, setData] = useState([]);
+  const [stocks, setStocks] = useState([]);
   console.log(isAuth)
+
+
+
+  const getOrders = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "/authentication/sign-in";
+    else {
+      const decoded = jwt(token);
+      const posts = await axios.post(endPoint + "/users/orderByPharmacy", {
+        pharmacyId: decoded.id,
+      });
+      console.log({ posts });
+      setData(posts.data.orders);
+    }
+  };
+
+  useEffect(() => {
+    getOrders();
+    getMedicines()
+  }, []);
+
+
+  const getMedicines = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) window.location.href = "/authentication/sign-in";
+    else {
+      const decoded = jwt(token);
+
+      const posts = await axios.post(endPoint + "/users/medicineByPharmacy", {
+        pharmacyId: decoded.id,
+      });
+      console.log({ posts });
+      setStocks(posts.data.orders);
+    
+    }
+  };
   
 
   return isAuth ? (
     <DashboardLayout>
       <DashboardNavbar />
       <MDBox py={3}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="dark"
-                icon="weekend"
-                title="Bookings"
-                count={281}
-                percentage={{
-                  color: "success",
-                  amount: "+55%",
-                  label: "than lask week",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                icon="leaderboard"
-                title="Today's Users"
-                count="2,300"
-                percentage={{
-                  color: "success",
-                  amount: "+3%",
-                  label: "than last month",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="success"
-                icon="store"
-                title="Revenue"
-                count="34k"
-                percentage={{
-                  color: "success",
-                  amount: "+1%",
-                  label: "than yesterday",
-                }}
-              />
-            </MDBox>
-          </Grid>
-          <Grid item xs={12} md={6} lg={3}>
-            <MDBox mb={1.5}>
-              <ComplexStatisticsCard
-                color="primary"
-                icon="person_add"
-                title="Followers"
-                count="+91"
-                percentage={{
-                  color: "success",
-                  amount: "",
-                  label: "Just updated",
-                }}
-              />
-            </MDBox>
-          </Grid>
-        </Grid>
         <MDBox mt={4.5}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={4}>
               <MDBox mb={3}>
                 <ReportsBarChart
                   color="info"
-                  title="Pharmacies"
-                  description="Last Pharmacy Review"
+                  title="Medicines"
+                  description={
+                    <>
+                      <strong>{stocks.length}</strong> total medicines
+                    </>
+                  }
                   date="just updated"
                   chart={reportsBarChartData}
                 />
@@ -102,13 +87,13 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="success"
-                  title="labs"
+                  title="Orders"
                   description={
                     <>
-                      (<strong>+15%</strong>) increase in today sales.
+                      <strong>{data.length}</strong> orders all time
                     </>
                   }
-                  date="updated 4 min ago"
+                  date="just updated"
                   chart={sales}
                 />
               </MDBox>
@@ -117,19 +102,16 @@ function Dashboard() {
               <MDBox mb={3}>
                 <ReportsLineChart
                   color="dark"
-                  title="completed Orders"
-                  description="Last Order Review"
+                  title="Sales"
+                  description={
+                    <>
+                      <strong>{data.filter(e => e.state === 'DELIVERED').length}</strong> orders completed
+                    </>
+                  }
                   date="just updated"
                   chart={tasks}
                 />
               </MDBox>
-            </Grid>
-          </Grid>
-        </MDBox>
-        <MDBox>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={12} lg={12}>
-              <OrdersOverview />
             </Grid>
           </Grid>
         </MDBox>

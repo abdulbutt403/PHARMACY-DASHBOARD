@@ -2,6 +2,7 @@ import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import Verify from "layouts/authentication/verify-up";
 import Icon from "@mui/material/Icon";
 import Pharmacies from "layouts/Pharmacies";
 import AddForm from "layouts/AddForm";
@@ -72,6 +73,15 @@ const routes = [
     icon: <Icon fontSize="small">assignment</Icon>,
     route: "/authentication/sign-up",
     component: <SignUp />,
+  },
+  {
+    type: "collapse",
+    name: "Verify User",
+    margin: false,
+    key: "verify-up",
+    icon: <Icon fontSize="small">assignment</Icon>,
+    route: "/authentication/verify",
+    component: <Verify />,
   },
 ];
 
