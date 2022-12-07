@@ -1,5 +1,6 @@
 import Dashboard from "layouts/dashboard";
 import Tables from "layouts/tables";
+import History from "layouts/history";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Verify from "layouts/authentication/verify-up";
@@ -20,11 +21,20 @@ const routes = [
   },
   {
     type: "collapse",
-    name: "Orders",
+    name: "Current Orders",
     key: "tables",
     icon: <Icon fontSize="small">table_view</Icon>,
     route: "/tables",
     component: <Tables />,
+  },
+  {
+    type: "collapse",
+    name: "Order history",
+    margin: false,
+    key: "order-history",
+    icon: <Icon fontSize="small">Order History</Icon>,
+    route: "/order-history",
+    component: <History />,
   },
   {
     type: "collapse",

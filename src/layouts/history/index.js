@@ -39,6 +39,7 @@ function Tables() {
   const { columns, rows } = authorsTableData();
   const { columns: pColumns, rows: pRows } = projectsTableData();
   const [data, setData] = useState([]);
+  const [meta, setMeta] = useState([]);
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(false);
   const [medicine, setMedicine] = useState(false);
@@ -90,7 +91,12 @@ function Tables() {
         pharmacyId: decoded.id,
       });
       console.log({ posts });
-      setData(posts.data.orders.filter(e => e.state === "PENDING"));
+      setMeta(posts.data.orders)
+      setData(
+        posts.data.orders.filter(
+          (e) => e.state === "DELIVERED" || e.state === "REJECTED"
+        )
+      );
       setLoading(false);
     }
   };
@@ -182,7 +188,33 @@ function Tables() {
                       Orders
                     </MDTypography>
                   </MDBox>
-                  <MDBox pt={3}>
+                  <MDBox pt={3} style={{position: 'relative'}}>
+                    <div style={{ display: "flex", position: 'absolute', top: 50 }}>
+                      <MDBadge
+                        badgeContent={`VIEW REJECTED`}
+                        color="primary"
+                        variant="gradient"
+                        size="lg"
+                        style={{height: 35, cursor: 'pointer'}}
+                        onClick={()=> setData(meta.filter((e) => e.state === "REJECTED" ))}
+                      />
+                      <MDBadge
+                        badgeContent={`View Delivered`}
+                        color="info"
+                        variant="gradient"
+                        size="lg"
+                        style={{height: 35, cursor: 'pointer'}}
+                        onClick={()=> setData(meta.filter((e) => e.state === "DELIVERED" ))}
+                      />
+                                  <MDBadge
+                        badgeContent={`View All`}
+                        color="secondary"
+                        variant="gradient"
+                        size="lg"
+                        style={{height: 35, cursor: 'pointer'}}
+                        onClick={()=> setData(meta.filter((e) => e.state != "PENDING" ))}
+                      />
+                    </div>
                     <MaterialTable
                       icons={tableIcons}
                       title=""
@@ -245,18 +277,6 @@ function Tables() {
                           tooltip: "See medicines",
                           onClick: (event, rowData) =>
                             openPharmacy(event, rowData),
-                        },
-                        {
-                          icon: () => <Clear />,
-                          tooltip: "Rejected order",
-                          onClick: (event, rowData) =>
-                            rejectOrder(event, rowData),
-                        },
-                        {
-                          icon: () => <Check />,
-                          tooltip: "Mark as Delivered",
-                          onClick: (event, rowData) =>
-                            completeOrder(event, rowData),
                         },
                       ]}
                       data={data}
