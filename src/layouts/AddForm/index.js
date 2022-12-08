@@ -119,6 +119,9 @@ function Pharmacies() {
       toast.success("Successfully Entered Medicine");
       console.log({ posts });
       setLoading(false);
+      setQuantity("")
+      setPrice("")
+      setTitle("")
     }
   };
 
@@ -148,7 +151,11 @@ function Pharmacies() {
                     variant="standard"
                     fullWidth
                     value={quantity}
-                    onChange={(e) => setQuantity(e.target.value)}
+                    onChange={(e) => {
+                      setQuantity(e.target.value)
+                      if(e.target.value < 0)
+                      setQuantity('0')
+                    }}
                   />
                 </MDBox>
                 <MDBox mb={2}>
@@ -158,7 +165,11 @@ function Pharmacies() {
                     variant="standard"
                     fullWidth
                     value={price}
-                    onChange={(e) => setPrice(e.target.value)}
+                    onChange={(e) => {
+                      setPrice(e.target.value)
+                      if(e.target.value < 0)
+                      setPrice('0')
+                    }}
                   />
                 </MDBox>
                 <span style={{textTransform: 'uppercase', fontStyle: 'bold', fontSize: 13}}>Prescription required?</span>
